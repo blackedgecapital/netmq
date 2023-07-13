@@ -1,5 +1,4 @@
-﻿#if !NETSTANDARD1_6
-using System;
+﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -12,13 +11,21 @@ namespace NetMQ.Core.Utils
 
         public static bool Open()
         {
+#if NETSTANDARD1_1_OR_GREATER || NET471_OR_GREATER
+            if (RuntimeInformation.ProcessArchitecture != Architecture.X86 &&
+                RuntimeInformation.ProcessArchitecture != Architecture.X64)
+            {
+                return false; // RDTSC instruction not supported
+            }
+#endif
+
             var p = (int)Environment.OSVersion.Platform;
 
             byte[] rdtscCode = IntPtr.Size == 4 ? RDTSC_32 : RDTSC_64;
 
             s_size = (ulong)(rdtscCode.Length);
 
-            if ((p == 4) || (p == 128))
+            if ((p == 4) || (p == 128)) // Unix || Mono on Unix
             {
                 // Unix
                 if (IsARMArchitecture()) return false;
@@ -174,4 +181,3 @@ namespace NetMQ.Core.Utils
         }
     }
 }
-#endif
