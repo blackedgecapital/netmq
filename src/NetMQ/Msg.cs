@@ -22,6 +22,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text;
 using NetMQ.Core.Utils;
@@ -531,6 +532,25 @@ namespace NetMQ
                 // TODO shouldn't we set the type to uninitialised, or call clear, here? the object has a null refCount, but other methods may try to use it
             }
         }
+
+        /// <summary>
+        /// Used to determine when bytes are actually copied to send on the wire
+        /// </summary>
+        /// <returns>Flag indicating if refCounter was present</returns>        
+        public bool TrySetShared([NotNullWhen(returnValue: true)] out AtomicCounter? refCounter)
+        {
+            refCounter = m_refCount;
+            if (refCounter == null)
+                return false;
+
+            if (!IsShared)
+            {
+                refCounter.Set(1);
+                Flags |= MsgFlags.Shared;
+            }
+
+            return true;
+        }
         
         /// <summary>
         /// Override the Object ToString method to show the object-type, and values of the MsgType, Size, and Flags properties.
@@ -698,6 +718,18 @@ namespace NetMQ
 
             m_offset = m_offset + count;
             Size = Size - count;
+        }
+
+        /// <summary>
+        /// Set size, for example, after serializing into pooled buffer
+        /// </summary>
+        /// <param name="size">Actual size of the message payload; must be less than internal buffer</param>
+        public void SetSize(int size)
+        {
+            if (m_data == null || size > m_data.Length - m_offset || size < 0)
+                throw new ArgumentOutOfRangeException(nameof(size), "Size should be between 0 and length of buffer");
+
+            Size = size;
         }
 
         /// <summary>

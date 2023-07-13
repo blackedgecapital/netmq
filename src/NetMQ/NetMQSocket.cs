@@ -168,6 +168,11 @@ namespace NetMQ
         /// </summary>
         internal SocketBase SocketHandle => m_socketHandle;
 
+        /// <summary>
+        /// Mailbox handle - for polling
+        /// </summary>
+        public System.Net.Sockets.Socket MailboxSocket => m_socketHandle.Handle;
+
         NetMQSocket ISocketPollable.Socket => this;
 
         #region Bind, Unbind, Connect, Disconnect, Close
