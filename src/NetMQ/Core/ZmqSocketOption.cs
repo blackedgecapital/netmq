@@ -348,6 +348,8 @@ namespace NetMQ.Core
         PgmMaxTransportServiceDataUnitLength = 1001,
 
         Correlate = 58, // in zmq it's 52 and 53, but I guess it does not matter so long as it is unique.
-        Relaxed = 59
+        Relaxed = 59,
+
+        PgmSenderStatsCallback = 1005,
     }
 }

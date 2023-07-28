@@ -20,11 +20,29 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using NetMQ.Core.Transports.Pgm;
 using System;
 using System.Text;
 
 namespace NetMQ.Core
 {
+    /// Options governing PgmSenderStats callbacks
+    public class PgmSenderStatsCallback
+    {
+        /// Delegate to run
+        public Action<PgmSenderStats> StatsCallback { get; }
+
+        /// Frequency to run callback
+        public TimeSpan Frequency { get; }
+
+        /// Constructor
+        public PgmSenderStatsCallback(Action<PgmSenderStats> statsCallback, TimeSpan frequency)
+        {
+            StatsCallback = statsCallback;
+            Frequency = frequency;
+        }
+    }
+
     /// <summary>
     /// Class Options is essentially a container for socket-related option-settings.
     /// </summary>
@@ -330,6 +348,8 @@ namespace NetMQ.Core
         public bool Correlate { get; set; }
         public bool Relaxed { get; set; }
 
+        public PgmSenderStatsCallback? PgmSenderStatsCallback { get; set; }
+
         /// <summary>
         /// Assign the given optionValue to the specified option.
         /// </summary>
@@ -539,6 +559,10 @@ namespace NetMQ.Core
                         Correlate = Get<bool>();
                         break;
                     }
+
+                case ZmqSocketOption.PgmSenderStatsCallback:
+                    PgmSenderStatsCallback = optionValue == null ? null : Get<PgmSenderStatsCallback>();
+                    break;
                 
                 default:
                     throw new InvalidException("Options.SetSocketOption called with invalid ZmqSocketOption of " + option);
@@ -658,6 +682,9 @@ namespace NetMQ.Core
                 
                 case ZmqSocketOption.CurveServerKey:
                     return CurveServerKey;
+
+                case ZmqSocketOption.PgmSenderStatsCallback:
+                    return PgmSenderStatsCallback;
                 
                 default:
                     throw new InvalidException("GetSocketOption called with invalid ZmqSocketOption of " + option);

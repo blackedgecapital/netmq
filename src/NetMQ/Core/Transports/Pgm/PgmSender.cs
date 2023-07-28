@@ -12,6 +12,7 @@ namespace NetMQ.Core.Transports.Pgm
         /// ID of the timer used to delay the reconnection. Value is 1.
         /// </summary>
         private const int ReconnectTimerId = 1;
+        private const int SenderStatsTimerId = 2;
 
         private readonly Options m_options;
         private readonly Address m_addr;
@@ -20,6 +21,8 @@ namespace NetMQ.Core.Transports.Pgm
 
         private AsyncSocket? m_socket;
         private PgmSocket? m_pgmSocket;
+        private byte[]? m_pgmSenderStatsBuffer;
+        private PgmSenderStatsCallback? m_senderStatsCallback;
 
         private ByteArraySegment? m_outBuffer;
         private int m_outBufferSize;
@@ -106,6 +109,19 @@ namespace NetMQ.Core.Transports.Pgm
                 m_state = State.Delaying;
                 AddTimer(GetNewReconnectIvl(), ReconnectTimerId);
             }
+
+            if (m_options.PgmSenderStatsCallback != null)
+            {
+                m_pgmSenderStatsBuffer = new byte[PgmSenderStats.BufferLength];
+                RegisterSenderStatsCallback();
+            }
+        }
+
+        private void RegisterSenderStatsCallback()
+        {
+            m_senderStatsCallback = m_options.PgmSenderStatsCallback;
+            if (m_senderStatsCallback != null)
+                AddTimer((int)m_senderStatsCallback.Frequency.TotalMilliseconds, SenderStatsTimerId);
         }
 
         private void StartConnecting()
@@ -152,13 +168,30 @@ namespace NetMQ.Core.Transports.Pgm
         /// <exception cref="NotImplementedException">This method must not be called on instances of PgmSender.</exception>
         public override void TimerEvent(int id)
         {
-            if (m_state == State.Delaying)
+            if (id == ReconnectTimerId)
             {
-                StartConnecting();
+                if (m_state == State.Delaying)
+                {
+                    StartConnecting();
+                }
+                else
+                {
+                    Debug.Assert(false);
+                }
             }
-            else
+            else if (id == SenderStatsTimerId)
             {
-                Debug.Assert(false);
+                Assumes.NotNull(m_pgmSenderStatsBuffer);
+                Assumes.NotNull(m_senderStatsCallback);
+
+                if (m_pgmSocket != null)
+                {
+                    m_pgmSocket.PopulateSenderStats(m_pgmSenderStatsBuffer);
+                    PgmSenderStats stats = new PgmSenderStats(m_pgmSenderStatsBuffer);
+                    m_senderStatsCallback.StatsCallback(stats);
+                }
+
+                RegisterSenderStatsCallback();
             }
         }
 

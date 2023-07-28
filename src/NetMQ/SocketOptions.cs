@@ -514,5 +514,14 @@ namespace NetMQ
             get => m_socket.GetSocketOptionX<bool>(ZmqSocketOption.Correlate);
             set => m_socket.SetSocketOption(ZmqSocketOption.Correlate, value);
         }
+
+        /// <summary>
+        /// Callback to access PGM Sender Stats; Warning! Called on IOThread
+        /// </summary>
+        public PgmSenderStatsCallback? PgmSenderStatsCallback
+        {
+            get => m_socket.GetSocketOptionX<PgmSenderStatsCallback>(ZmqSocketOption.PgmSenderStatsCallback);
+            set => m_socket.SetSocketOption(ZmqSocketOption.PgmSenderStatsCallback, value);
+        }
     }
 }
