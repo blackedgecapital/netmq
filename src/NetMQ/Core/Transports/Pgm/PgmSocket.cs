@@ -46,6 +46,11 @@ namespace NetMQ.Core.Transports.Pgm
         public const SocketOptionName RM_RATE_WINDOW_SIZE = (SocketOptionName)(RmOptionsbase + 1);
 
         /// <summary>
+        /// Get sender statistics
+        /// </summary>
+        public const SocketOptionName RM_SENDER_STATISTICS = (SocketOptionName)(RmOptionsbase + 5);
+
+        /// <summary>
         /// set IP multicast outgoing interface
         /// </summary>
         public const SocketOptionName RM_SET_SEND_IF = (SocketOptionName)(RmOptionsbase + 7);
@@ -221,5 +226,8 @@ namespace NetMQ.Core.Transports.Pgm
 
             Handle.Dispose();
         }
+
+        internal void PopulateSenderStats(byte[] pgmSenderStatsBuffer)
+            => Handle?.GetSocketOption(PgmLevel, RM_SENDER_STATISTICS, pgmSenderStatsBuffer);
     }
 }
