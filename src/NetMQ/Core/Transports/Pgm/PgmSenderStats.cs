@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace NetMQ.Core.Transports.Pgm
 {
@@ -90,38 +91,12 @@ namespace NetMQ.Core.Transports.Pgm
         ///</summary>
         public ulong TotalODataPacketsSent { get; private set; }
 
-        internal PgmSenderStats(byte[] buffer)
+        internal static void FromBuffer(byte[] buffer, out PgmSenderStats stats)
         {
             if (buffer.Length != BufferLength)
                 throw new ArgumentException(nameof(buffer));
 
-            int startIndex = 0;
-
-            DataBytesSent = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            TotalBytesSent = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            NaksReceived = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            NaksReceivedTooLate = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            NumOutstandingNaks = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            NumNaksAfterRData = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            RepairPacketsSent = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            BufferSpaceAvailable = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            TrailingEdgeSeqId = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            LeadingEdgeSeqId = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            RateKBitsPerSecOverall = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            RateKBitsPerSecLast = BitConverter.ToUInt64(buffer, startIndex);
-            startIndex += 8;
-            TotalODataPacketsSent = BitConverter.ToUInt64(buffer, startIndex);
+            stats = MemoryMarshal.Cast<byte, PgmSenderStats>(new Span<byte>(buffer))[0];
         }
 
         /// <summary>

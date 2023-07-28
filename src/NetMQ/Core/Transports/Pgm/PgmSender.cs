@@ -187,7 +187,7 @@ namespace NetMQ.Core.Transports.Pgm
                 if (m_pgmSocket != null)
                 {
                     m_pgmSocket.PopulateSenderStats(m_pgmSenderStatsBuffer);
-                    PgmSenderStats stats = new PgmSenderStats(m_pgmSenderStatsBuffer);
+                    PgmSenderStats.FromBuffer(m_pgmSenderStatsBuffer, out PgmSenderStats stats);
                     m_senderStatsCallback.StatsCallback(stats);
                 }
 
