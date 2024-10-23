@@ -228,6 +228,12 @@ namespace NetMQ.Core.Transports.Pgm
         }
 
         internal void PopulateSenderStats(byte[] pgmSenderStatsBuffer)
-            => Handle?.GetSocketOption(PgmLevel, RM_SENDER_STATISTICS, pgmSenderStatsBuffer);
+        {
+            try
+            {
+                Handle?.GetSocketOption(PgmLevel, RM_SENDER_STATISTICS, pgmSenderStatsBuffer);
+            }
+            catch { }
+        }
     }
 }
