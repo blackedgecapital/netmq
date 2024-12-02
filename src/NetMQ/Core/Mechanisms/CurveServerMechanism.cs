@@ -28,12 +28,12 @@ namespace NetMQ.Core.Mechanisms
         public CurveServerMechanism(SessionBase session, Options options) :
             base(session, options, "CurveZMQMESSAGES", "CurveZMQMESSAGEC")
         {
-            m_secretKey = (byte[]) options.CurveSecretKey.Clone();
+            m_secretKey = (byte[])options.CurveSecretKey.Clone();
             m_cnClientKey = new byte[Curve25519XSalsa20Poly1305.KeyLength];
             m_cookieKey = new byte[Curve25519XSalsa20Poly1305.KeyLength];
             Curve25519XSalsa20Poly1305.KeyPair(out m_cnSecretKey, out m_cnPublicKey);
         }
-        
+
         public override void Dispose()
         {
             base.Dispose();
@@ -142,7 +142,7 @@ namespace NetMQ.Core.Mechanisms
                 return PushMsgResult.Error;
 
             helloPlaintext.Clear();
-            
+
             m_state = State.SendingWelcome;
             return PushMsgResult.Ok;
         }
@@ -157,13 +157,7 @@ namespace NetMQ.Core.Mechanisms
             //  8-byte prefix plus 16-byte random nonce
             CookieNoncePrefix.CopyTo(cookieNonce);
             using var rng = RandomNumberGenerator.Create();
-#if NETSTANDARD2_1
             rng.GetBytes(cookieNonce.Slice(8));
-#else
-            byte[] temp = new byte[16];
-            rng.GetBytes(temp);
-            temp.CopyTo(cookieNonce.Slice(8));
-#endif
 
             // Generate cookie = Box [C' + s'](t)
             m_cnClientKey.CopyTo(cookiePlaintext);
@@ -184,12 +178,7 @@ namespace NetMQ.Core.Mechanisms
             //  Create full nonce for encryption
             //  8-byte prefix plus 16-byte random nonce
             WelcomeNoncePrefix.CopyTo(welcomeNonce);
-#if NETSTANDARD2_1
             rng.GetBytes(welcomeNonce.Slice(8));
-#else
-            rng.GetBytes(temp);
-            temp.CopyTo(welcomeNonce.Slice(8));
-#endif
 
             // Create 144-byte Box [S' + cookie](S->C')
             m_cnPublicKey.CopyTo(welcomePlaintext);
@@ -251,7 +240,7 @@ namespace NetMQ.Core.Mechanisms
             bool decrypt = box.TryDecrypt(initiatePlaintext, initiateBox, initiateNonce);
             if (!decrypt)
                 return PushMsgResult.Error;
-            
+
             Span<byte> vouchNonce = stackalloc byte[Curve25519XSalsa20Poly1305.NonceLength];
             Span<byte> vouchPlaintext = stackalloc byte[64];
             Span<byte> vouchBox = new Span<byte>(initiatePlaintext, 48, 80);
@@ -277,7 +266,7 @@ namespace NetMQ.Core.Mechanisms
 
             if (!ParseMetadata(new Span<byte>(initiatePlaintext, 128, initiatePlaintext.Length - 128 - 16)))
                 return PushMsgResult.Error;
-            
+
             vouchPlaintext.Clear();
             Array.Clear(initiatePlaintext, 0, initiatePlaintext.Length);
 
@@ -300,10 +289,10 @@ namespace NetMQ.Core.Mechanisms
             var readyBox = msg.Slice(14);
 
             Assumes.NotNull(m_box);
-            
+
             m_box.Encrypt(readyBox, readyPlaintext, readyNonce);
             Array.Clear(readyPlaintext, 0, readyPlaintext.Length);
-            
+
             Span<byte> ready = msg;
             ReadyLiteral.CopyTo(ready);
 

@@ -1,5 +1,3 @@
-#if NETSTANDARD2_0 || NETSTANDARD2_1 || NET47
-
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -98,5 +96,3 @@ namespace NetMQ
         }
     }
 }
-
-#endif

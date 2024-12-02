@@ -189,13 +189,7 @@ namespace NetMQ.Core.Mechanisms
 
             VouchNoncePrefix.CopyTo(vouchNonce);
             using var rng = RandomNumberGenerator.Create();
-#if NETSTANDARD2_1
             rng.GetBytes(vouchNonce.Slice(8));
-#else
-            byte[] temp = new byte[16];
-            rng.GetBytes(temp);
-            temp.CopyTo(vouchNonce.Slice(8));
-#endif
 
             using var box = new Curve25519XSalsa20Poly1305(m_secretKey, m_cnServerKey);
             box.Encrypt(vouchBox, vouchPlaintext, vouchNonce);
@@ -265,7 +259,7 @@ namespace NetMQ.Core.Mechanisms
                 return PushMsgResult.Error;
             
             if (msg.Size < 7) 
-                return PushMsgResult.Error;;
+                return PushMsgResult.Error;
 
             int errorReasonLength = msg[6];
             if (errorReasonLength > msg.Size - 7)

@@ -118,8 +118,6 @@ namespace NetMQ
         #endregion
 
         #region AsyncEnumerable
-
-#if NETSTANDARD2_1
         
         /// <summary>
         /// Provides a consuming IAsyncEnumerable for receiving messages from the socket.
@@ -138,8 +136,6 @@ namespace NetMQ
             }
         }
         
-#endif        
-
         #endregion
 
         #endregion
@@ -302,8 +298,6 @@ namespace NetMQ
         
         #region AsyncEnumerable
 
-#if NETSTANDARD2_1
-        
         /// <summary>
         /// Provides a consuming IAsyncEnumerable for receiving messages from the socket.
         /// </summary>
@@ -321,8 +315,6 @@ namespace NetMQ
             }
         }
         
-#endif        
-
         #endregion
 
         #endregion

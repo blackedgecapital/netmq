@@ -1,4 +1,4 @@
-#if !NETSTANDARD2_1        
+#if false
 using System;
 using System.Text;
 
@@ -10,11 +10,11 @@ namespace NetMQ.Utils
         {
             if (Strings.IsNullOrEmpty(str))
                 return;
-            
+
             fixed (char* s = str)
-                fixed (byte* p = bytes)
-                    encoding.GetBytes(s, str.Length, p, bytes.Length);
+            fixed (byte* p = bytes)
+                encoding.GetBytes(s, str.Length, p, bytes.Length);
         }
     }
 }
-#endif        
+#endif

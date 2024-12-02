@@ -376,7 +376,6 @@ namespace NetMQ
 
         #region AsyncEnumerable
 
-#if NETSTANDARD2_1
         /// <summary>
         /// Provides a consuming IAsyncEnumerable for receiving messages from the socket.
         /// </summary>
@@ -393,8 +392,6 @@ namespace NetMQ
                 yield return await socket.ReceiveBytesAsync(cancellationToken);
             }
         }
-
-#endif
 
         #endregion
 
@@ -474,7 +471,7 @@ namespace NetMQ
         /// <param name="group">The message group.</param>
         /// <param name="str">The content of the received message as a string, or <c>null</c> if no message was available.</param>
         /// <returns><c>true</c> if a message was available, otherwise <c>false</c>.</returns>
-        public static bool TryReceiveString(this IGroupInSocket socket, Encoding encoding, 
+        public static bool TryReceiveString(this IGroupInSocket socket, Encoding encoding,
             [NotNullWhen(returnValue: true)] out string? group,
             [NotNullWhen(returnValue: true)] out string? str)
         {
@@ -497,7 +494,7 @@ namespace NetMQ
         /// <returns><c>true</c> if a message was available, otherwise <c>false</c>.</returns>
         /// <remarks>The method would return false if cancellation has had requested.</remarks>
         public static bool TryReceiveString(this IGroupInSocket socket, TimeSpan timeout,
-            [NotNullWhen(returnValue: true)] out string? group, 
+            [NotNullWhen(returnValue: true)] out string? group,
             [NotNullWhen(returnValue: true)] out string? str,
             CancellationToken cancellationToken = default)
         {
@@ -518,8 +515,8 @@ namespace NetMQ
         /// <returns><c>true</c> if a message was available, otherwise <c>false</c>.</returns>
         /// <remarks>The method would return false if cancellation has had requested.</remarks>
         public static bool TryReceiveString(this IGroupInSocket socket, TimeSpan timeout,
-            Encoding encoding, 
-            [NotNullWhen(returnValue: true)] out string? group, 
+            Encoding encoding,
+            [NotNullWhen(returnValue: true)] out string? group,
             [NotNullWhen(returnValue: true)] out string? str,
             CancellationToken cancellationToken = default)
         {
@@ -575,7 +572,6 @@ namespace NetMQ
 
         #region AsyncEnumerable
 
-#if NETSTANDARD2_1
         /// <summary>
         /// Provides a consuming IAsyncEnumerable for receiving messages from the socket.
         /// </summary>
@@ -592,8 +588,6 @@ namespace NetMQ
                 yield return await socket.ReceiveStringAsync(cancellationToken);
             }
         }
-
-#endif
 
         #endregion
 

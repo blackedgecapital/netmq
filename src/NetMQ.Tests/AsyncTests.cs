@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using NetMQ.Sockets;
+using NetMQ;
 using Xunit;
 using Xunit.Abstractions;
 
