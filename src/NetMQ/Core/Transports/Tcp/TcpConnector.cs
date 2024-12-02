@@ -248,18 +248,12 @@ namespace NetMQ.Core.Transports.Tcp
                     // Set the TCP keep-alive option values to the underlying socket.
                     m_s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, m_options.TcpKeepalive);
 
-                    if (m_options.TcpKeepaliveIdle != -1 && m_options.TcpKeepaliveIntvl != -1)
-                    {
-                        // Write the TCP keep-alive options to a byte-array, to feed to the IOControl method..
-                        var bytes = new ByteArraySegment(new byte[12]);
+                    if (m_options.TcpKeepaliveIdle != -1) {
+                        m_s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, m_options.TcpKeepaliveIdle / 1000);
+                    }
 
-                        Endianness endian = BitConverter.IsLittleEndian ? Endianness.Little : Endianness.Big;
-
-                        bytes.PutInteger(endian, m_options.TcpKeepalive, 0);
-                        bytes.PutInteger(endian, m_options.TcpKeepaliveIdle, 4);
-                        bytes.PutInteger(endian, m_options.TcpKeepaliveIntvl, 8);
-
-                        m_s.IOControl(IOControlCode.KeepAliveValues, (byte[])bytes, null);
+                    if (m_options.TcpKeepaliveIntvl != -1) {
+                        m_s.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, m_options.TcpKeepaliveIntvl / 1000);
                     }
                 }
 

@@ -204,17 +204,12 @@ namespace NetMQ.Core.Transports.Tcp
                     {
                         acceptedSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, m_options.TcpKeepalive);
 
-                        if (m_options.TcpKeepaliveIdle != -1 && m_options.TcpKeepaliveIntvl != -1)
-                        {
-                            var bytes = new ByteArraySegment(new byte[12]);
+                        if (m_options.TcpKeepaliveIdle != -1) {
+                            acceptedSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, m_options.TcpKeepaliveIdle / 1000);
+                        }
 
-                            Endianness endian = BitConverter.IsLittleEndian ? Endianness.Little : Endianness.Big;
-
-                            bytes.PutInteger(endian, m_options.TcpKeepalive, 0);
-                            bytes.PutInteger(endian, m_options.TcpKeepaliveIdle, 4);
-                            bytes.PutInteger(endian, m_options.TcpKeepaliveIntvl, 8);
-
-                            acceptedSocket.IOControl(IOControlCode.KeepAliveValues, (byte[])bytes, null);
+                        if (m_options.TcpKeepaliveIntvl != -1) {
+                            acceptedSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, m_options.TcpKeepaliveIntvl / 1000);
                         }
                     }
 
