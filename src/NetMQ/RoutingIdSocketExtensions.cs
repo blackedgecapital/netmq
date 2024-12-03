@@ -372,8 +372,6 @@ namespace NetMQ
         
         #region AsyncEnumerable
 
-#if NETSTANDARD2_1
-        
         /// <summary>
         /// Provides a consuming IAsyncEnumerable for receiving messages from the socket.
         /// </summary>
@@ -390,8 +388,6 @@ namespace NetMQ
                 yield return await socket.ReceiveBytesAsync(cancellationToken);
             }
         }
-        
-#endif  
         
         #endregion
 
@@ -564,8 +560,6 @@ namespace NetMQ
         
         #region AsyncEnumerable
 
-#if NETSTANDARD2_1
-        
         /// <summary>
         /// Provides a consuming IAsyncEnumerable for receiving messages from the socket.
         /// </summary>
@@ -582,8 +576,6 @@ namespace NetMQ
                 yield return await socket.ReceiveStringAsync(cancellationToken);
             }
         }
-        
-#endif  
         
         #endregion
 

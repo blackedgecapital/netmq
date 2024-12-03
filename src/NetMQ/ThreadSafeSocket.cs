@@ -45,14 +45,14 @@ namespace NetMQ
     public interface IThreadSafeInSocket : IThreadSafeSocket
     {
     }
-    
+
     /// <summary>
     /// Tag interface for sockets that send and receive messages with <see cref="Msg.RoutingId" />.
     /// </summary>
     public interface IRoutingIdSocket : IThreadSafeSocket
     {
     }
-    
+
     /// <summary>
     /// Tag interface to tag sockets that support sending a group message
     /// </summary>
@@ -66,18 +66,18 @@ namespace NetMQ
     public interface IGroupInSocket : IThreadSafeSocket
     {
     }
-    
+
     /// <summary>
     /// Abstract base class for NetMQ's different thread-safe socket types.
     /// </summary>
     /// <remarks>
     /// Various options are available in this base class, though their affect can vary by socket type.
     /// </remarks>
-    public abstract class ThreadSafeSocket: IThreadSafeSocket, IDisposable  
+    public abstract class ThreadSafeSocket : IThreadSafeSocket, IDisposable
     {
         internal readonly SocketBase m_socketHandle;
         private int m_isClosed;
-        
+
         /// <summary>
         /// Creates a thread socket of type <paramref name="socketType"/>
         /// </summary>
@@ -87,7 +87,7 @@ namespace NetMQ
             m_socketHandle = NetMQConfig.Context.CreateSocket(socketType);
             Options = new ThreadSafeSocketOptions(m_socketHandle);
         }
-        
+
         /// <summary>
         /// Get the Socket Options of this socket.
         /// </summary>
@@ -106,7 +106,7 @@ namespace NetMQ
         {
             return m_socketHandle.TrySend(ref msg, timeout, false);
         }
-        
+
         /// <summary>Attempt to receive a message for the specified amount of time.</summary>
         /// <param name="msg">A reference to a <see cref="Msg"/> instance into which the received message
         /// data should be placed.</param>
@@ -200,14 +200,6 @@ namespace NetMQ
         /// <summary>Closes this socket, rendering it unusable. Equivalent to calling <see cref="Dispose()"/>.</summary>
         public void Close()
         {
-            // #if NETSTANDARD2_0 || NETSTANDARD2_1 || NET47
-            // if (m_runtime != null)
-            // {
-            //     m_runtime.Remove(this);
-            //     m_runtime  = null;
-            // }
-            // #endif
-
             if (Interlocked.Exchange(ref m_isClosed, 1) != 0)
                 return;
 
@@ -217,7 +209,7 @@ namespace NetMQ
         }
 
         #endregion
-        
+
         #region IDisposable
 
         /// <summary>Closes this socket, rendering it unusable. Equivalent to calling <see cref="Close"/>.</summary>

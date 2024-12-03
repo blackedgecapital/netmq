@@ -1,6 +1,4 @@
-﻿#if NETSTANDARD2_0 || NETSTANDARD2_1 || NET47
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
@@ -307,5 +305,3 @@ namespace NetMQ
 #endregion
     }
 }
-
-#endif
