@@ -121,7 +121,8 @@ namespace NetMQ.Core.Transports.Tcp
             m_address.Resolve(addr, m_options.IPv4Only);
 
             Assumes.NotNull(m_address.Address);
-            Assumes.NotNull(m_handle);
+            // This is obviously false
+            // Assumes.NotNull(m_handle);
 
             try
             {
