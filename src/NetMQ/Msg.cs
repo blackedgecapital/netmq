@@ -533,7 +533,7 @@ namespace NetMQ
         /// <summary>
         /// Used to determine when bytes are actually copied to send on the wire
         /// </summary>
-        /// <returns>Flag indicating if refCounter was present</returns>        
+        /// <returns>Flag indicating if refCounter was present</returns>
         public bool TrySetShared([NotNullWhen(returnValue: true)] out AtomicCounter? refCounter)
         {
             refCounter = m_refCount;

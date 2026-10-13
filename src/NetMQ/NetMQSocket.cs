@@ -428,6 +428,19 @@ namespace NetMQ
             m_socketHandle.Monitor(endpoint, events);
         }
 
+        /// <summary>Registers a callback for socket transport events.</summary>
+        /// <remarks>
+        /// The callback runs synchronously on the thread raising the event, normally an I/O thread.
+        /// Registration replaces the previous callback and shares the event mask with socket monitoring.
+        /// Callback exceptions propagate to the event-raising code.
+        /// </remarks>
+        /// <param name="callback">Callback invoked when a selected event is raised.</param>
+        /// <param name="socketEvents">Events to monitor.</param>
+        public void RegisterMonitorCallback(Action<MonitorEvent> callback, SocketEvents socketEvents = SocketEvents.All)
+        {
+            m_socketHandle.RegisterMonitorCallback(callback, socketEvents);
+        }
+
         #region Socket options
 
         /// <summary>

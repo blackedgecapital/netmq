@@ -91,6 +91,8 @@ namespace NetMQ.Core
         /// <summary>Monitor socket.</summary>
         private SocketBase? m_monitorSocket;
 
+        private Action<MonitorEvent>? m_monitorCallback;
+
         /// <summary>Bitmask of events being monitored.</summary>
         private SocketEvents m_monitorEvents;
 
@@ -1682,6 +1684,12 @@ namespace NetMQ.Core
             }
         }
 
+        internal void RegisterMonitorCallback(Action<MonitorEvent> callback, SocketEvents socketEvents)
+        {
+            m_monitorEvents = socketEvents;
+            m_monitorCallback = callback;
+        }
+
         #region Monitor events
 
         public void EventConnected(string addr, AsyncSocket ch)
@@ -1766,6 +1774,8 @@ namespace NetMQ.Core
 
         private void MonitorEvent(MonitorEvent monitorEvent)
         {
+            m_monitorCallback?.Invoke(monitorEvent);
+
             if (m_monitorSocket == null)
                 return;
 

@@ -6,7 +6,8 @@ using NetMQ.Core.Transports;
 
 namespace NetMQ.Core
 {
-    internal class MonitorEvent
+    /// <summary>A socket transport monitoring event.</summary>
+    public class MonitorEvent
     {
         private const int ValueInteger = 1;
         private const int ValueChannel = 2;
@@ -26,16 +27,19 @@ namespace NetMQ.Core
                 s_sizeOfIntPtr = 8;
         }
 
+        /// <summary>Creates an event with an error-code argument.</summary>
         public MonitorEvent(SocketEvents monitorEvent, string addr, ErrorCode arg)
             : this(monitorEvent, addr, (int)arg)
         {
         }
 
+        /// <summary>Creates an event with an integer argument.</summary>
         public MonitorEvent(SocketEvents monitorEvent, string addr, int arg)
             : this(monitorEvent, addr, (object)arg)
         {
         }
 
+        /// <summary>Creates an event with a socket argument.</summary>
         public MonitorEvent(SocketEvents monitorEvent, string addr, AsyncSocket arg)
             : this(monitorEvent, addr, (object)arg)
         {
@@ -55,13 +59,16 @@ namespace NetMQ.Core
                 m_flag = 0;
         }
 
+        /// <summary>The transport endpoint associated with the event.</summary>
         public string Addr => m_addr;
 
+        /// <summary>The socket, error code, or interval associated with the event.</summary>
         public object? Arg => m_arg;
 
+        /// <summary>The transport event that occurred.</summary>
         public SocketEvents Event => m_monitorEvent;
 
-        public void Write(SocketBase s)
+        internal void Write(SocketBase s)
         {
             int size = 4 + 1 + (m_addr?.Length ?? 0) + 1; // event + len(addr) + addr + flag
 
@@ -110,7 +117,7 @@ namespace NetMQ.Core
             s.TrySend(ref msg, TimeSpan.Zero, false);
         }
 
-        public static MonitorEvent Read(SocketBase s)
+        internal static MonitorEvent Read(SocketBase s)
         {
             var msg = new Msg();
             msg.InitEmpty();
@@ -157,6 +164,7 @@ namespace NetMQ.Core
             return new MonitorEvent(@event, addr, arg);
         }
 
+        /// <summary>Returns the event argument as the requested type.</summary>
         [return: MaybeNull]
         public T ConvertArg<T>()
         {
